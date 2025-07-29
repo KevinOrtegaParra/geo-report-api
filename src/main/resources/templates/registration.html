@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Bienvenido a GEO-REPORT</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f6f8fa;
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #0077cc;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .footer {
+            font-size: 12px;
+            color: #888;
+            margin-top: 30px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2 class="header">¡Bienvenido a GeoReport, <span th:text="${nombre}">Usuario</span>!</h2>
+
+        <p>Gracias por registrarte en nuestra plataforma de reportes ciudadanos. Ahora puedes:</p>
+
+        <ul>
+            <li>Reportar incidentes de seguridad en tu zona.</li>
+            <li>Ver alertas geográficas de otras personas.</li>
+            <li>Contribuir a una comunidad más informada.</li>
+        </ul>
+
+        <!--<p>Haz clic en el siguiente botón para confirmar tu cuenta y comenzar:</p>
+        
+        <div style="text-align: center;">
+            <a th:href="@{${linkConfirmacion}}" class="btn">Confirmar cuenta</a>
+        </div>
+        -->
+
+        <p>Si no te registraste en GeoReport, puedes ignorar este mensaje.</p>
+
+        <div class="footer">
+            © 2025 GeoReport. Todos los derechos reservados.
+        </div>
+    </div>
+</body>
+
+</html>
