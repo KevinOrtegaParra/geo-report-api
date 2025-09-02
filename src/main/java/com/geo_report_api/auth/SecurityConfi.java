@@ -1,6 +1,9 @@
 package com.geo_report_api.auth;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,6 +15,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import com.geo_report_api.auth.filter.JwtAuthenticationFilter;
 import com.geo_report_api.auth.filter.JwtAuthorizationFilter;
@@ -30,6 +36,9 @@ public class SecurityConfi {
     @Autowired
     JwtAuthorizationFilter jwtAuthorizationFilter;
 
+    @Value("${fron.url}")
+    private String frontend;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager)
             throws Exception {
@@ -40,6 +49,7 @@ public class SecurityConfi {
         return http
                 .csrf(csrf -> csrf
                         .disable())
+                .cors(cors -> {})
                 .authorizeHttpRequests(authRequest -> authRequest
                         .requestMatchers("/auth/**", "/i18n/**", "/content/**",
                                 "/users/register", "/h2-console/**", "/swagger-ui/**",
@@ -53,6 +63,18 @@ public class SecurityConfi {
                 .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
 
+    }
+
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.setAllowedOrigins(List.of(frontend)); 
+        config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
+        config.setAllowedHeaders(List.of("Origin","Content-Type","Accept","Authorization"));
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
     }
 
     @Bean

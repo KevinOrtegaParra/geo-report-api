@@ -2,11 +2,16 @@ package com.geo_report_api.auth.jwt;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
@@ -25,11 +30,19 @@ public class JwtUtils {
     @Value("${jwt.time.expiration}")
     private String timeExpiration;
 
-    
     // Generar token de acceso
-    public String generateAccesToken(String userName) {
+    public String generateAccesToken(UserDetails userDetails) {
+
+        Map<String, Object> claims = new HashMap<>();
+
+        claims.put("roles", userDetails.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority) // ["ROLE_Admin", "ROLE_User"]
+                .toList());
+
         return Jwts.builder()
-                .subject(userName)
+                .claims(claims)
+                .subject(userDetails.getUsername())
                 .issuedAt(Date.from(Instant.now()))
                 .expiration(new Date(System.currentTimeMillis() + Long.parseLong(timeExpiration)))
                 .signWith(getSignateKey())
@@ -70,6 +83,13 @@ public class JwtUtils {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
+    }
+
+    // obtener roles del token
+    @SuppressWarnings("unchecked")
+    public List<String> getRolesFromToken(String token) {
+        Claims claims = extractAllClaims(token);
+        return claims.get("roles", List.class);
     }
 
     public SecretKey getSignateKey() {
